@@ -7,3 +7,5 @@ jspm_packages
 
 .env
 dist/
+*.js
+*.js.map

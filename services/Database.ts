@@ -21,7 +21,6 @@ const gracefulExit = () => {
 
 export default {
   connect: async () => {
-    console.log('uri ================>>>>>>>>>>>>>>> ', uri);
     if (!!isConnected) {
       console.log('--> using existing db connection');
     }

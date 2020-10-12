@@ -1,7 +1,13 @@
 import mongoose from 'mongoose';
 
 mongoose.Promise = global.Promise;
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`;
+
+const user = process.env.DB_USER;
+const pass = process.env.DB_PASS;
+const host = process.env.DB_HOST;
+const dbName = process.env.DB_NAME;
+
+const uri = `mongodb+srv://${user}:${pass}@${host}/${dbName}?retryWrites=true&w=majority`;
 
 let isConnected: number;
 
@@ -15,6 +21,7 @@ const gracefulExit = () => {
 
 export default {
   connect: async () => {
+    console.log('uri ================>>>>>>>>>>>>>>> ', uri);
     if (!!isConnected) {
       console.log('--> using existing db connection');
     }

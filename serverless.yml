@@ -1,0 +1,70 @@
+service: myfirstserverlessproject
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+frameworkVersion: '2'
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-typescript
+  - serverless-dotenv-plugin
+
+custom:
+  dotenv:
+    path: ./.env
+    basePath: ./
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  timeout: 10
+  region: us-east-1
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - http:
+          path: 'hello'
+          method: get
+          cors: true
+  create:
+    handler: handler.create
+    events:
+      -
+        http:
+          path: 'notes'
+          method: post
+          cors: true
+  getOne:
+    handler: handler.getOne
+    events:
+      -
+        http:
+          path: 'notes/{id}'
+          method: get
+  getAll:
+    handler: handler.getAll
+    events:
+      -
+        http:
+          path: 'notes'
+          method: get
+          cors: true
+    cors: true
+  update:
+    handler: handler.update
+    events:
+      -
+        http:
+          path: 'notes/{id}'
+          method: put
+          cors: true
+  delete:
+    handler: handler.deleteOne
+    events:
+      -
+        http:
+          path: 'notes/{id}'
+          method: delete
+          cors: true
+

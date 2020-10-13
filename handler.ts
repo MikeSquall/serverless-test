@@ -25,28 +25,34 @@ export const create: Handler = async (event: any, context: Context, callback) =>
   try {
     await DbService.connect();
   } catch (e) {
-    callback(null, {
+    const response: CallbackResponse = {
       headers,
+      isBase64Encoded,
       statusCode: e.statusCode || 500,
-      body: { message: 'Unable to create note: db connection failed', data: e.message },
-    });
+      body: JSON.stringify({ message: 'Unable to create note: db connection failed', data: e.message }),
+    }
+    callback(null, response);
   }
   const { title, description } = JSON.parse(event.body);
   const note = await NoteService.create({ title, description });
 
   if (!note) {
-    callback(null, {
+    const response: CallbackResponse = {
       headers,
+      isBase64Encoded,
       statusCode: 500,
-      body: {message: 'Unable to create note: server error'},
-    });
+      body: JSON.stringify({message: 'Unable to create note: server error'}),
+    };
+    callback(null, response);
   }
 
-  callback(null, {
+  const response: CallbackResponse = {
     headers,
+    isBase64Encoded,
     statusCode: 201,
     body: JSON.stringify({ note }),
-  });
+  };
+  callback(null, response);
 };
 
 export const getOne: Handler = async (event: any, context: Context, callback) => {
@@ -54,19 +60,24 @@ export const getOne: Handler = async (event: any, context: Context, callback) =>
   try {
     await DbService.connect();
   } catch (e) {
-    callback(null, {
+    const response: CallbackResponse = {
       headers,
+      isBase64Encoded,
       statusCode: e.statusCode || 500,
-      body: { message: 'Unable to get note: db connection failed', data: e.message },
-    });
+      body: JSON.stringify({ message: 'Unable to get note: db connection failed', data: e.message }),
+    };
+    callback(null, response);
   }
   const id = event.pathParameters.id;
   const note = await NoteService.getOne({ id });
 
-  callback(null, {
+  const response: CallbackResponse = {
+    headers,
+    isBase64Encoded,
     statusCode: 200,
     body: JSON.stringify({ note }),
-  });
+  };
+  callback(null, response);
 };
 
 export const getAll: Handler = async (_: any, context: Context, callback) => {
@@ -98,18 +109,28 @@ export const update: Handler = async (event: any, context: Context, callback) =>
   try {
     await DbService.connect();
   } catch (e) {
-    callback(null, {
+    const response: CallbackResponse = {
       headers,
+      isBase64Encoded,
       statusCode: e.statusCode || 500,
-      body: { message: 'Unable to update note: db connection failed', data: e.message },
-    });
+      body: JSON.stringify({ message: 'Unable to update note: db connection failed', data: e.message }),
+    };
+    callback(null, response);
   }
   const id = event.pathParameters.id;
   const { title, description } = JSON.parse(event.body);
 
   const note = await NoteService.update({ id, title: title, description });
 
-  if (!!note) { callback(null, { statusCode: 500, body: JSON.stringify({note}) }); }
+  if (!!note) {
+    const response: CallbackResponse = {
+      headers,
+      isBase64Encoded,
+      statusCode: 500,
+      body: JSON.stringify({note}),
+    };
+    callback(null, response);
+  }
 
   callback(null, { statusCode: 200 });
 };
@@ -119,15 +140,25 @@ export const deleteOne: Handler = async (event: any, context: Context, callback)
   try {
     await DbService.connect();
   } catch (e) {
-    callback(null, {
+    const response: CallbackResponse = {
       headers,
+      isBase64Encoded,
       statusCode: e.statusCode || 500,
-      body: { message: 'Unable to delete note: db connection failed', data: e.message },
-    });
+      body: JSON.stringify({ message: 'Unable to delete note: db connection failed', data: e.message }),
+    };
+    callback(null, response);
   }
   const id = event.pathParameters.id;
   const note = await NoteService.delete({ id });
 
-  if (!!note) { callback(null, { statusCode: 500, body: JSON.stringify({note}) }); }
+  if (!!note) {
+    const response: CallbackResponse = {
+      headers,
+      isBase64Encoded,
+      statusCode: 500,
+      body: JSON.stringify({note}) };
+    callback(null, response);
+  }
+
   callback(null, { statusCode: 200 });
 };

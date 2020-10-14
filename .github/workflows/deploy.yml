@@ -4,11 +4,14 @@ on:
   push:
     branches:
       - 'main'
+  pull_request:
+    types: [ opened, closed, synchronize, reopened ]
 
 jobs:
   deploy:
     name: deploy
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip_ci') }} || github.event.pull_request.draft == false
     strategy:
       matrix:
         node-version: [ 12.x ]

@@ -29,6 +29,14 @@ jobs:
           ${{ secrets.DB_ENV }}
           EOF
 
+      - name: Create Auth0 secrets
+        run: |
+          cat > secrets.json << EOF
+          {
+            "AUTH0_CLIENT_ID": ${{ secrets.AUTH0_CLIENT_ID }}
+          }
+          EOF
+
       - run: yarn install --frozen-lockfile
 
       - name: Serverless deploy

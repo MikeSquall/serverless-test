@@ -1,6 +1,5 @@
 service: myfirstserverlessproject
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
+
 frameworkVersion: '2'
 
 plugins:
@@ -18,8 +17,13 @@ provider:
   runtime: nodejs12.x
   timeout: 10
   region: us-east-1
+  environment:
+    AUTH0_CLIENT_ID: ${file(./secrets.json):AUTH0_CLIENT_ID}
+    AUTH0_CLIENT_PUBLIC_KEY: ${file(./public_key)}
 
 functions:
+  auth:
+    handler: handler.auth
   hello:
     handler: handler.hello
     events:
@@ -49,8 +53,8 @@ functions:
         http:
           path: 'notes'
           method: get
+          authorizer: auth
           cors: true
-    cors: true
   update:
     handler: handler.update
     events:
@@ -68,3 +72,26 @@ functions:
           method: delete
           cors: true
 
+resources:
+  Resources:
+    # This response is needed for custom authorizer failures cors support ¯\_(ツ)_/¯
+    GatewayResponse:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: EXPIRED_TOKEN
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '401'
+    AuthFailureGatewayResponse:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: UNAUTHORIZED
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '401'

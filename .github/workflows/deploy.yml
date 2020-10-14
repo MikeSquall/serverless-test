@@ -11,7 +11,7 @@ jobs:
   deploy:
     name: deploy
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip_ci') }} || github.event.pull_request.draft == false
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'run_ci') }}
     strategy:
       matrix:
         node-version: [ 12.x ]

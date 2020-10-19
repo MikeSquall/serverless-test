@@ -56,7 +56,7 @@ jobs:
           echo "-----------"
           echo ${{ github.events.pull_request.draft }}
           echo "-----------"
-          echo ${{ !contains(github.event.pull_request.labels.*.name, 'skip_ci') }} || github.event.pull_request.draft == false
+          echo ${{ !contains(github.event.pull_request.labels.*.name, 'skip_ci') }} || ${{ github.event.pull_request.draft == false }}
 
   api:
     name: api

@@ -45,12 +45,7 @@ jobs:
       - name: Go to directory
         run: |
           cd packages/admin
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Check modules
-        run: |
+          yarn install --frozen-lockfile
           pwd
           ls node_modules/
           ls ../api
@@ -74,12 +69,7 @@ jobs:
       - name: Go to directory
         run: |
           cd packages/api
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Check modules
-        run: |
+          yarn install --frozen-lockfile
           pwd
           ls node_modules/
           ls ../admin

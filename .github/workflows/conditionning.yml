@@ -1,0 +1,75 @@
+name: test conditions
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'develop'
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v0.1.0, v0.3.2
+  pull_request:
+    types: [opened, closed, synchronize, reopened]
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      admin: ${{ steps.filter.outputs.admin }}
+      api: ${{ steps.filter.outputs.api }}
+    steps:
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            admin:
+              - 'packages/admin/**'
+            api:
+              - 'packages/api/**'
+
+  admin:
+    name: admin
+    needs: changes
+    runs-on: ubuntu-latest
+    if: ${{ needs.changes.outputs.admin == 'true' }}
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use NodeJS ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Go to directory
+        run: |
+          cd packages/admin
+          yarn install --frozen-lockfile
+          pwd
+          ls node_modules/
+          ls ../api
+
+  api:
+    name: api
+    needs: changes
+    runs-on: ubuntu-latest
+    if: ${{ needs.changes.outputs.api == 'true' }}
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use NodeJS ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Go to directory
+        run: |
+          cd packages/api
+          yarn install --frozen-lockfile
+          pwd
+          ls node_modules/
+          ls ../admin

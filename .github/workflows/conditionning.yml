@@ -30,7 +30,7 @@ jobs:
     name: admin
     needs: changes
     runs-on: ubuntu-latest
-    if: ${{ needs.changes.outputs.admin == 'true' }}
+    if: ${{ needs.changes.outputs.admin == 'true' }} && (${{ !contains(github.event.pull_request.labels.*.name, 'skip_ci') }} || github.event.pull_request.draft == false)
     strategy:
       matrix:
         node-version: [12.x]
@@ -54,7 +54,7 @@ jobs:
     name: api
     needs: changes
     runs-on: ubuntu-latest
-    if: ${{ needs.changes.outputs.api == 'true' }}
+    if: ${{ needs.changes.outputs.api == 'true' }} && (${{ !contains(github.event.pull_request.labels.*.name, 'skip_ci') }} || github.event.pull_request.draft == false)
     strategy:
       matrix:
         node-version: [12.x]

@@ -48,9 +48,12 @@ jobs:
           ${{ secrets.DB_ENV }}
           EOF
 
-      - run: yarn install --frozen-lockfile
+      - name: Install dependencies
+        if: steps.filter.outputs.models == 'false'
+        run: yarn install --frozen-lockfile
 
       - name: Serverless deploy
+        if: steps.filter.outputs.models == 'false'
         uses: serverless/github-action@master
         with:
           args: deploy

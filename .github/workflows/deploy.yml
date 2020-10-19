@@ -18,6 +18,25 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            models:
+              - 'models/**'
+            services:
+              - 'services/**'
+
+      - name: Changes in "models"
+        if: steps.filter.outputs.models == "true"
+        run: |
+          echo "Changes in models/"
+
+      - name: Changes in "services"
+        if: steps.filter.outputs.services == "true"
+        run: |
+          echo "Changes in services/"
+
       - name: Use NodeJS ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:

@@ -30,7 +30,7 @@ jobs:
     name: admin
     needs: changes
     runs-on: ubuntu-latest
-    if: ${{ needs.changes.outputs.admin == 'true' }}
+    if: ${{ needs.changes.outputs.admin == 'true' }} && (${{ !contains(github.event.pull_request.labels.*.name, 'skip_ci') }} || github.event.pull_request.draft == false)
     strategy:
       matrix:
         node-version: [12.x]
@@ -47,14 +47,22 @@ jobs:
           cd packages/admin
           yarn install --frozen-lockfile
           pwd
+          echo "-----------"
           ls node_modules/
-          ls ../api
+          echo "-----------"
+          ls ../
+          echo "-----------"
+          echo ${{ github.events.pull_request.labels.*.name }}
+          echo "-----------"
+          echo ${{ github.events.pull_request.draft }}
+          echo "-----------"
+          echo ${{ !contains(github.event.pull_request.labels.*.name, 'skip_ci') }} || ${{ github.event.pull_request.draft == false }}
 
   api:
     name: api
     needs: changes
     runs-on: ubuntu-latest
-    if: ${{ needs.changes.outputs.api == 'true' }}
+    if: ${{ needs.changes.outputs.api == 'true' }} && (!contains(github.event.pull_request.labels.*.name, 'skip_ci') || github.event.pull_request.draft == false)
     strategy:
       matrix:
         node-version: [12.x]
@@ -71,5 +79,13 @@ jobs:
           cd packages/api
           yarn install --frozen-lockfile
           pwd
+          echo "-----------"
           ls node_modules/
-          ls ../admin
+          echo "-----------"
+          ls ../
+          echo "-----------"
+          echo ${{ github.events.pull_request.labels.*.name }}
+          echo "-----------"
+          echo ${{ github.events.pull_request.draft }}
+          echo "-----------"
+          echo ${{ !contains(github.event.pull_request.labels.*.name, 'skip_ci') }} || github.event.pull_request.draft == false
